@@ -27,6 +27,7 @@ use Symfony\Component\Serializer\Serializer;
  * @method \DataMat\GrinningCat\Endpoints\CustomEndpoint custom()
  * @method \DataMat\GrinningCat\Endpoints\EmbedderEndpoint embedder()
  * @method \DataMat\GrinningCat\Endpoints\FileManagerEndpoint fileManager()
+ * @method \DataMat\GrinningCat\Endpoints\IngestionEndpoint ingestion()
  * @method \DataMat\GrinningCat\Endpoints\LargeLanguageModelEndpoint largeLanguageModel()
  * @method \DataMat\GrinningCat\Endpoints\MemoryEndpoint memory()
  * @method \DataMat\GrinningCat\Endpoints\MessageEndpoint message()

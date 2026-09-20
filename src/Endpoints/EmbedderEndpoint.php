@@ -4,7 +4,6 @@ namespace DataMat\GrinningCat\Endpoints;
 
 use DataMat\GrinningCat\DTO\Api\Factory\FactoryObjectSettingOutput;
 use DataMat\GrinningCat\DTO\Api\Factory\FactoryObjectSettingsOutput;
-use DataMat\GrinningCat\DTO\SettingInput;
 use GuzzleHttp\Exception\GuzzleException;
 
 class EmbedderEndpoint extends AbstractEndpoint

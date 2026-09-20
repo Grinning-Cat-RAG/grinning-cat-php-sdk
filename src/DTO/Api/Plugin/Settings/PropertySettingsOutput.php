@@ -13,4 +13,9 @@ class PropertySettingsOutput
 
     public ?string $type = null;
 
+    public ?string $description = null;
+
+    public ?array $enum = null;
+
+    public ?string $format = null;
 }

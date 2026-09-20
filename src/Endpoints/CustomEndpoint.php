@@ -20,6 +20,40 @@ class CustomEndpoint extends AbstractEndpoint
     }
 
     /**
+     * Read the mgmt_message plugin's global banner from its public endpoint.
+     *
+     * @return array<string, mixed>
+     *
+     * @throws GuzzleException
+     */
+    public function getGlobalMessage(): array
+    {
+        $response = $this->client->getHttpClient()
+            ->createHttpClient()
+            ->get('/mgmt_message/global_message');
+
+        if ($response->getStatusCode() >= 400) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Failed to fetch global message: %s',
+                    $response->getReasonPhrase()
+                )
+            );
+        }
+
+        $message = $this->client->getSerializer()->decode(
+            $response->getBody()->getContents(),
+            'json'
+        );
+
+        if (!is_array($message)) {
+            throw new \RuntimeException('Global message response must be a JSON object');
+        }
+
+        return $message;
+    }
+
+    /**
      * This method is used to trigger a custom endpoint with a POST method
      *
      * @return array<int|string, mixed>
