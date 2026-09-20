@@ -11,4 +11,13 @@ class TokenOutput
 
     #[SerializedName('token_type')]
     public string $tokenType = 'bearer';
+
+    #[SerializedName('expires_in')]
+    public ?int $expiresIn = null;
+
+    #[SerializedName('refresh_token')]
+    public ?string $refreshToken = null;
+
+    #[SerializedName('refresh_expires_in')]
+    public ?int $refreshExpiresIn = null;
 }

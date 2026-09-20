@@ -38,6 +38,47 @@ class AuthEndpoint extends AbstractEndpoint
     }
 
     /**
+     * Exchanges a refresh token for a new access token. The refresh token is rotated: the one returned here
+     * replaces it and must be used for the next refresh, since the submitted one is consumed and reusing it
+     * revokes the whole session.
+     *
+     * @throws GuzzleException
+     */
+    public function refresh(string $refreshToken): TokenOutput
+    {
+        $httpClient = $this->client->getHttpClient()->createHttpClient();
+
+        $response = $httpClient->post($this->formatUrl('/refresh'), [
+            'json' => [
+                'refresh_token' => $refreshToken,
+            ],
+        ]);
+
+        /** @var TokenOutput $result */
+        $result = $this->deserialize($response->getBody()->getContents(), TokenOutput::class);
+
+        $this->client->addToken($result->accessToken);
+
+        return $result;
+    }
+
+    /**
+     * Revokes the session the refresh token belongs to. Already-issued access tokens stay valid until they expire.
+     *
+     * @throws GuzzleException
+     */
+    public function logout(string $refreshToken): void
+    {
+        $httpClient = $this->client->getHttpClient()->createHttpClient();
+
+        $httpClient->post($this->formatUrl('/logout'), [
+            'json' => [
+                'refresh_token' => $refreshToken,
+            ],
+        ]);
+    }
+
+    /**
      * This endpoint is used to get a list of available permissions in the system. The permissions are used to define
      * the access rights of the users in the system. The permissions are defined by the system administrator.
      *

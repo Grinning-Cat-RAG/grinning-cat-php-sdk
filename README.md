@@ -28,6 +28,20 @@ $grinningCatClient = new GrinningCatClient(
     new HttpClient('grinning_cat_core', 1865, null)
 );
 ```
+
+Authenticate with a username and password (the client keeps the returned access token for the following calls),
+refresh it before it expires, and log out to revoke the session:
+
+```php
+$token = $grinningCatClient->auth()->token('username', 'password');
+// $token->accessToken, $token->expiresIn, $token->refreshToken, $token->refreshExpiresIn
+
+// before the access token expires, exchange the (single-use) refresh token for a new pair
+$token = $grinningCatClient->auth()->refresh($token->refreshToken);
+
+// revoke the session; already-issued access tokens stay valid until they expire
+$grinningCatClient->auth()->logout($token->refreshToken);
+```
 Send a message to the websocket:
 
 ```php
