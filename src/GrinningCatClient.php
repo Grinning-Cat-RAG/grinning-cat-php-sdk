@@ -15,7 +15,6 @@ use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
-
 /**
  * @method \DataMat\GrinningCat\Endpoints\AdminsEndpoint admins()
  * @method \DataMat\GrinningCat\Endpoints\AgenticWorkflowEndpoint agenticWorkflow()

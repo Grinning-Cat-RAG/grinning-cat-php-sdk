@@ -14,7 +14,7 @@ class WhyBuilder implements BaseBuilder
     /** @var array<array<string, mixed>>|null */
     private ?array $memory = [];
 
-    public static function create() : WhyBuilder
+    public static function create(): WhyBuilder
     {
         return new self();
     }

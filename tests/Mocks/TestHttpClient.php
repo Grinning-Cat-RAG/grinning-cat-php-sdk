@@ -21,7 +21,7 @@ class TestHttpClient extends HttpClient
         parent::__construct($host, $port, $apikey, $isHTTPs);
     }
 
-    public function createHttpClient(?HandlerStack $handlerStack = null): Client
+    public function createHttpClient(?HandlerStack $handlerStack = null, array $headers = []): Client
     {
         return $this->mockClient;
     }

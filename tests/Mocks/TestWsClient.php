@@ -20,7 +20,7 @@ class TestWsClient extends WSClient
         parent::__construct($host, $port, $apikey, $isWSS);
     }
 
-    protected function createWsClient(string $agentId, string $userId): Client
+    protected function createWsClient(string $agentId, string $userId, ?string $chatId = null): Client
     {
         return $this->mockClient;
     }

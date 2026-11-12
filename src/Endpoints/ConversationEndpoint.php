@@ -25,6 +25,7 @@ class ConversationEndpoint extends AbstractEndpoint
             $agentId,
             ConversationHistoryOutput::class,
             $userId,
+            chatId: $chatId,
         );
     }
 
@@ -36,7 +37,7 @@ class ConversationEndpoint extends AbstractEndpoint
      */
     public function getConversations(string $agentId, string $userId): array
     {
-        $response = $this->getHttpClient($agentId, $userId)->get($this->prefix,);
+        $response = $this->getHttpClient($agentId, $userId)->get($this->prefix);
         if ($response->getStatusCode() !== 200) {
             throw new \RuntimeException(
                 sprintf('Failed to fetch data from endpoint %s: %s', $this->prefix, $response->getReasonPhrase())
@@ -47,7 +48,9 @@ class ConversationEndpoint extends AbstractEndpoint
         $result = [];
         foreach ($response as $item) {
             $result[] = $this->deserialize(
-                json_encode($item, JSON_THROW_ON_ERROR), ConversationsResponse::class, 'json'
+                json_encode($item, JSON_THROW_ON_ERROR),
+                ConversationsResponse::class,
+                'json'
             );
         }
         return $result;
@@ -65,6 +68,7 @@ class ConversationEndpoint extends AbstractEndpoint
             $agentId,
             ConversationsResponse::class,
             $userId,
+            chatId: $chatId,
         );
     }
 
@@ -83,6 +87,7 @@ class ConversationEndpoint extends AbstractEndpoint
             $agentId,
             ConversationDeleteOutput::class,
             $userId,
+            chatId: $chatId,
         );
     }
 
@@ -99,7 +104,7 @@ class ConversationEndpoint extends AbstractEndpoint
         string $chatId,
         ?string $name = null,
         ?array $metadata = null,
-    ): ConversationHistoryOutput {
+    ): ConversationAttributesChangeOutput {
         if (!$name && !$metadata) {
             throw new RuntimeException('Either name or metadata must be provided');
         }
@@ -118,6 +123,7 @@ class ConversationEndpoint extends AbstractEndpoint
             ConversationAttributesChangeOutput::class,
             $payload,
             $userId,
+            $chatId,
         );
     }
 }

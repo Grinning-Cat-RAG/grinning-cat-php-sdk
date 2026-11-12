@@ -128,25 +128,22 @@ trait TestTrait
         return $wsClientMock;
     }
 
-    protected function getMockedGuzzleClientWithHandlerStack(array &$container): BaseHttpClient
+    /**
+     * Real HttpClient whose requests are recorded in $container and answered with the given bodies, in order.
+     *
+     * @param array<int, array<string, mixed>>|null $bodies
+     * @param array<int, array<string, mixed>> $container
+     */
+    protected function getMockedGuzzleClientWithHandlerStack(array &$container, ?array $bodies = null): BaseHttpClient
     {
-        $mock = new MockHandler([
-            new Response(200, [], '{}')
-        ]);
+        $responses = array_map(
+            static fn (array $body) => new Response(200, [], json_encode($body, JSON_THROW_ON_ERROR)),
+            $bodies ?? [[], [], []]
+        );
 
-        $client = new BaseHttpClient('example.com', null, $this->apikey);
-        $reflection = new \ReflectionClass($client);
-        $middlewares = $reflection->getProperty('middlewares')->getValue($client);
+        $handlerStack = HandlerStack::create(new MockHandler($responses));
+        $handlerStack->push(Middleware::history($container));
 
-        $newHandler = new HandlerStack($mock);
-        foreach ($middlewares as $name => $middleware) {
-            $newHandler->push($middleware, $name);
-        }
-        $newHandler->push(Middleware::history($container));
-        $newGuzzleClient = $client->createHttpClient($newHandler);
-
-        $reflection->getProperty('httpClient')->setValue($client, $newGuzzleClient);
-
-        return $client;
+        return new BaseHttpClient('example.com', null, $this->apikey, false, $handlerStack);
     }
 }

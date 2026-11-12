@@ -49,7 +49,8 @@ class WSClient
         return $this->wsClient;
     }
 
-    public function close() {
+    public function close()
+    {
         if ($this->wsClient) {
             $this->wsClient->disconnect();
             $this->wsClient->close();
@@ -73,7 +74,7 @@ class WSClient
             ->withPath($path)
             ->withQueryItems($query)
             ->withPort($this->port)
-            ;
+        ;
     }
 
     protected function createWsClient(string $agentId, string $userId, ?string $chatId = null): Client

@@ -66,7 +66,9 @@ class UsersEndpoint extends AbstractEndpoint
         $result = [];
         foreach ($response as $item) {
             $result[] = $this->deserialize(
-                json_encode($item, JSON_THROW_ON_ERROR), UserOutput::class, 'json'
+                json_encode($item, JSON_THROW_ON_ERROR),
+                UserOutput::class,
+                'json'
             );
         }
         return $result;

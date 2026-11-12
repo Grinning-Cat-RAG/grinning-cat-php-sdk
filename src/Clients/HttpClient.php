@@ -4,55 +4,45 @@ namespace DataMat\GrinningCat\Clients;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
 use Phrity\Net\Uri;
-use Psr\Http\Message\RequestInterface;
 
 class HttpClient
 {
-    protected Client $httpClient;
     protected Uri $httpUri;
     protected ?string $apikey;
     protected ?string $token;
-    protected ?string $agentId = null;
-    protected ?string $userId = null;
-    protected ?string $chatId = null;
-
-    /** @var array<string, callable> */
-    protected array $middlewares;
+    protected ?HandlerStack $handlerStack;
 
     public function __construct(
         string $host,
         ?int $port = null,
         ?string $apikey = null,
-        ?bool $isHTTPs = false
+        ?bool $isHTTPs = false,
+        ?HandlerStack $handlerStack = null,
     ) {
         $this->apikey = $apikey;
         $this->token = null;
-
-        $this->middlewares = [
-            'beforeSecureRequest' => Middleware::tap($this->beforeSecureRequest()),
-            'beforeJwtRequest' => Middleware::tap($this->beforeJwtRequest()),
-        ];
-
-        $handlerStack = HandlerStack::create();
-        foreach ($this->middlewares as $name => $middleware) {
-            $handlerStack->push($middleware, $name);
-        }
+        $this->handlerStack = $handlerStack;
 
         $this->httpUri = (new Uri())
             ->withHost($host)
             ->withPort($port)
             ->withScheme($isHTTPs ? 'https' : 'http');
-
-        $this->httpClient = $this->createHttpClient($handlerStack);
     }
 
-    public function createHttpClient(?HandlerStack $handlerStack = null): Client
+    /**
+     * Builds a new Guzzle client carrying the Authorization header plus the given extra headers.
+     *
+     * @param array<string, string> $headers
+     */
+    public function createHttpClient(?HandlerStack $handlerStack = null, array $headers = []): Client
     {
         $config = [
             'base_uri' => $this->httpUri,
+            'headers' => array_merge($this->baseHeaders(), $headers),
         ];
+
+        $handlerStack = $handlerStack ?? $this->handlerStack;
         if ($handlerStack) {
             $config['handler'] = $handlerStack;
         }
@@ -66,17 +56,28 @@ class HttpClient
         return $this;
     }
 
+    /**
+     * Every call returns a new client whose headers are fixed at creation, so they can never leak into, or be
+     * overwritten by, the requests of another client.
+     */
     public function getClient(?string $agentId = null, ?string $userId = null, ?string $chatId = null): Client
     {
         if (!$this->apikey && !$this->token) {
             throw new \InvalidArgumentException('You must provide an apikey or a token');
         }
 
-        $this->agentId = $agentId;
-        $this->userId = $userId;
-        $this->chatId = $chatId;
+        $headers = [];
+        if (!empty($agentId)) {
+            $headers['X-Agent-ID'] = $agentId;
+        }
+        if (!empty($userId)) {
+            $headers['X-User-ID'] = $userId;
+        }
+        if (!empty($chatId)) {
+            $headers['X-Chat-ID'] = $chatId;
+        }
 
-        return $this->httpClient;
+        return $this->createHttpClient(null, $headers);
     }
 
     public function getHttpUri(): Uri
@@ -84,36 +85,13 @@ class HttpClient
         return $this->httpUri;
     }
 
-    protected function beforeSecureRequest(): \Closure
+    /**
+     * @return array<string, string>
+     */
+    protected function baseHeaders(): array
     {
-        return function (RequestInterface &$request, array $requestOptions) {
-            if (!empty($this->apikey)) {
-                $request = $request->withHeader('Authorization', 'Bearer ' . $this->apikey);
-            }
-            if (!empty($this->userId)) {
-                $request = $request->withHeader('X-User-ID', $this->userId);
-            }
-            if (!empty($this->agentId)) {
-                $request = $request->withHeader('X-Agent-ID', $this->agentId);
-            }
-            if (!empty($this->chatId)) {
-                $request = $request->withHeader('X-Chat-ID', $this->chatId);
-            }
-        };
-    }
+        $bearer = !empty($this->token) ? $this->token : $this->apikey;
 
-    protected function beforeJwtRequest(): \Closure
-    {
-        return function (RequestInterface &$request, array $requestOptions) {
-            if (!empty($this->token)) {
-                $request = $request->withHeader('Authorization', 'Bearer ' . $this->token);
-            }
-            if (!empty($this->agentId)) {
-                $request = $request->withHeader('X-Agent-ID', $this->agentId);
-            }
-            if (!empty($this->chatId)) {
-                $request = $request->withHeader('X-Chat-ID', $this->chatId);
-            }
-        };
+        return empty($bearer) ? [] : ['Authorization' => 'Bearer ' . $bearer];
     }
 }

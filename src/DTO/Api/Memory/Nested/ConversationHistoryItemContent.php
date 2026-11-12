@@ -7,7 +7,6 @@ use DataMat\GrinningCat\DTO\Why;
 
 class ConversationHistoryItemContent extends MessageBase
 {
-
     /** @var Why|null */
     public ?Why $why = null;
 

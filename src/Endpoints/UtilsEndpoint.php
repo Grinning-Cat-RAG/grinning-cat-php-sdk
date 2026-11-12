@@ -49,7 +49,9 @@ class UtilsEndpoint extends AbstractEndpoint
         $result = [];
         foreach ($response as $item) {
             $result[] = $this->deserialize(
-                json_encode($item, JSON_THROW_ON_ERROR), AgentOutput::class, 'json'
+                json_encode($item, JSON_THROW_ON_ERROR),
+                AgentOutput::class,
+                'json'
             );
         }
         return $result;

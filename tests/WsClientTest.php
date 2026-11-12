@@ -20,7 +20,7 @@ class WsClientTest extends TestCase
         $guzzleUri = $wsClient->getWsUri('agent', 'user');
 
         self::assertEquals(
-            'ws://example.com:8080/ws/agent?user_id=user&apikey=' . $this->apikey,
+            'ws://example.com:8080/ws/agent?user_id=user',
             urldecode($guzzleUri->toString())
         );
     }
@@ -35,7 +35,7 @@ class WsClientTest extends TestCase
         $guzzleUri = $wsClient->getWsUri('agent', 'user');
 
         self::assertEquals(
-            'ws://example.com:8080/ws/agent?user_id=user&token=' . $this->token,
+            'ws://example.com:8080/ws/agent?user_id=user',
             urldecode($guzzleUri->toString())
         );
     }

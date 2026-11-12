@@ -20,8 +20,8 @@ class PluginCollectionOutput
     {
         return [
             'filters' => $this->filters->toArray(),
-            'installed' => array_map(fn(PluginItemOutput $item) => $item->toArray(), $this->installed),
-            'registry' => array_map(fn(PluginItemRegistryOutput $item) => $item->toArray(), $this->registry),
+            'installed' => array_map(fn (PluginItemOutput $item) => $item->toArray(), $this->installed),
+            'registry' => array_map(fn (PluginItemRegistryOutput $item) => $item->toArray(), $this->registry),
         ];
     }
 }

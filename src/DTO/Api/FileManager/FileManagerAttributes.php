@@ -17,7 +17,7 @@ class FileManagerAttributes
     public function toArray(): array
     {
         return [
-            'files' => array_map(fn(FileResponse $file) => $file->toArray(), $this->files),
+            'files' => array_map(fn (FileResponse $file) => $file->toArray(), $this->files),
             'size' => $this->size,
         ];
     }

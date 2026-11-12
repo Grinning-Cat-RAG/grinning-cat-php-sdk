@@ -21,8 +21,7 @@ class MessageEndpoint extends AbstractEndpoint
         string $agentId,
         string $userId,
         ?string $chatId = null,
-    ): ChatOutput
-    {
+    ): ChatOutput {
         return $this->postJson(
             '/message',
             $agentId,

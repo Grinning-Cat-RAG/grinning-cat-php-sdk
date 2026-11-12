@@ -18,30 +18,21 @@ class MessageEndpointTest extends TestCase
      */
     public function testSendHttpMessage(): void
     {
-        $expected = [
-            'text' => 'Hello World',
-            'type' => 'chat',
-            'why' => [
-                'input' => 'input',
-                'memory' => [
-                    'declarative' => [],
-                ],
-            ],
-        ];
+        $expected = $this->chatOutput();
 
         $grinningCatClient = $this->getGrinningCatClient($this->apikey, $expected);
 
         $endpoint = $grinningCatClient->message();
         $response = $endpoint->sendHttpMessage(
-            new Message($expected['text']), 'agent_id', 'user_id'
+            new Message($expected['message']['text']), 'agent_id', 'user_id'
         );
 
         self::assertInstanceOf(ChatOutput::class, $response);
 
-        self::assertEquals($response->message->text, $expected['text']);
-        self::assertEquals($response->message->type, $expected['type']);
-        self::assertEquals($response->message->why->input, $expected['why']['input']);
-        self::assertEquals($response->message->why->memory->declarative, $expected['why']['memory']['declarative']);
+        self::assertEquals($response->message->text, $expected['message']['text']);
+        self::assertEquals($response->message->type, $expected['message']['type']);
+        self::assertEquals($response->message->why->input, $expected['message']['why']['input']);
+        self::assertEquals($expected['message']['why']['memory'], $response->message->why->memory);
     }
 
     /**
@@ -49,29 +40,43 @@ class MessageEndpointTest extends TestCase
      */
     public function testSendWebsocketMessage(): void
     {
-        $expected = [
-            'text' => 'Hello World',
-            'type' => 'chat',
-            'why' => [
-                'input' => 'input',
-                'memory' => [
-                    'declarative' => [],
-                ],
-            ],
-        ];
+        $expected = $this->chatOutput();
 
-        $grinningCatClient = $this->getGrinningCatClient($this->apikey, $expected);
+        $grinningCatClient = $this->getGrinningCatClient(
+            $this->apikey,
+            ['type' => 'chat', 'content' => json_encode($expected, JSON_THROW_ON_ERROR)]
+        );
 
         $endpoint = $grinningCatClient->message();
         $response = $endpoint->sendWebsocketMessage(
-            new Message($expected['text']), 'agent_id', 'user_id'
+            new Message($expected['message']['text']), 'agent_id', 'user_id'
         );
 
         self::assertInstanceOf(ChatOutput::class, $response);
 
-        self::assertEquals($response->message->text, $expected['text']);
-        self::assertEquals($response->message->type, $expected['type']);
-        self::assertEquals($response->message->why->input, $expected['why']['input']);
-        self::assertEquals($response->message->why->memory->declarative, $expected['why']['memory']['declarative']);
+        self::assertEquals($response->message->text, $expected['message']['text']);
+        self::assertEquals($response->message->type, $expected['message']['type']);
+        self::assertEquals($response->message->why->input, $expected['message']['why']['input']);
+        self::assertEquals($expected['message']['why']['memory'], $response->message->why->memory);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function chatOutput(): array
+    {
+        return [
+            'agent_id' => 'agent_id',
+            'user_id' => 'user_id',
+            'chat_id' => 'chat_id',
+            'message' => [
+                'text' => 'Hello World',
+                'type' => 'chat',
+                'why' => [
+                    'input' => 'input',
+                    'memory' => [],
+                ],
+            ],
+        ];
     }
 }

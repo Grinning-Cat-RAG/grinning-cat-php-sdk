@@ -2,7 +2,6 @@
 
 namespace DataMat\GrinningCat\DTO\Api\Memory;
 
-
 use DataMat\GrinningCat\DTO\Api\Memory\Nested\MemoryRecallQuery;
 use DataMat\GrinningCat\DTO\Api\Memory\Nested\MemoryRecallVectors;
 

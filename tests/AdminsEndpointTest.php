@@ -53,11 +53,14 @@ class AdminsEndpointTest extends TestCase
                     'tags' => 'tag1, tag2',
                     'thumb' => 'https://thumb2.com',
                     'version' => '1.0.0',
-                    'active' => true,
-                    'v' => [],
-                    'tools' => [],
-                    'forms' => [],
-                    'endpoints' => [],
+                    'local_info' => [
+                        'active' => true,
+                        'hooks' => [],
+                        'tools' => [],
+                        'forms' => [],
+                        'endpoints' => [],
+                        'mcp_clients' => [],
+                    ]
                 ]
             ],
             'registry' => [
